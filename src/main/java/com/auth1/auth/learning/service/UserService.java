@@ -1,10 +1,15 @@
 package com.auth1.auth.learning.service;
 
+import com.auth1.auth.learning.dtos.EmailDtoSd;
+import com.auth1.auth.learning.dtos.SendEmailMessageDto;
 import com.auth1.auth.learning.model.Token;
 import com.auth1.auth.learning.model.User;
 import com.auth1.auth.learning.repository.TokenRepository;
 import com.auth1.auth.learning.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +20,10 @@ import java.util.UUID;
 
 @Service
 public class UserService {
+    @Autowired
+    private KafkaTemplate<String,String> kafkaTemplate;
+    @Autowired
+    private ObjectMapper objectMapper;
    @Autowired
     private UserRepository userRepository;
    @Autowired
@@ -27,7 +36,21 @@ public class UserService {
      user.setEmail(email);
      user.setName(name);
      user.setPassword(bCryptPasswordEncoder.encode(password));
-     return userRepository.save(user);
+     User savedUser=userRepository.save(user);
+     SendEmailMessageDto message=new SendEmailMessageDto();
+     message.setFrom("support@scaler.com");
+     message.setTo(email);
+     message.setSubject("Welcome to Scaler!");
+     message.setBody("Hey Looking forward to have you on our plateform!");
+
+     try{
+         kafkaTemplate.send(
+                 "sendEmail",
+                 objectMapper.writeValueAsString(message)
+         );
+     }catch(Exception e){}
+
+     return savedUser;
     }
 
     public Token login(String email, String password) {
@@ -82,5 +105,12 @@ public class UserService {
            return false;
        }
        return true;
+    }
+    public ResponseEntity<User> getByEmail(String email){
+        Optional<User> userOptional=userRepository.findByEmail(email);
+        if(userOptional.isEmpty()){
+            return null;
+        }
+        return ResponseEntity.ok(userOptional.get());
     }
 }

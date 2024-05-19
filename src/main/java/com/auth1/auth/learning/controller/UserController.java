@@ -1,5 +1,6 @@
 package com.auth1.auth.learning.controller;
 
+import com.auth1.auth.learning.dtos.EmailDtoSd;
 import com.auth1.auth.learning.dtos.LoginRequestDto;
 import com.auth1.auth.learning.dtos.SignUpRequestDto;
 import com.auth1.auth.learning.model.Token;
@@ -8,10 +9,7 @@ import com.auth1.auth.learning.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
@@ -34,6 +32,11 @@ public class UserController {
     @PostMapping("/validateToken/{token}")
     public boolean validate(@PathVariable("token") String token){
         return userService.validateToken(token);
+    }
+
+    @PostMapping("/email")
+    public ResponseEntity<User> getUserWithEmail(@RequestBody EmailDtoSd emailDtoSd){
+        return userService.getByEmail(emailDtoSd.getEmail());
     }
 
 }

@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.auth.1</groupId>
 	<artifactId>auth-learning</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.1-BETA</version>
 	<name>auth-learning</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
@@ -61,6 +61,17 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-eureka-client -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+			<version>4.1.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
